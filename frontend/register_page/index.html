@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Pass Management Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Thin top header -->
+    <header class="mini-header" aria-label="Breadcrumb">
+        <span>Login Portal &gt; Register</span>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner" aria-label="Portal banner">
+        <div class="banner__overlay"></div>
+
+    </section>
+
+    <div class="app" id="appRoot">
+      <div class="sidebar">
+
+    <a href="#" class="menu-item">
+        <span>Register</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+    <a href="#" class="menu-item">
+        <span>Visitors</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+    <a href="#" class="menu-item">
+        <span>Employees</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+    <a href="#" class="menu-item">
+        <span>Blacklist</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+    <a href="#" class="menu-item">
+        <span>History</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+    <a href="#" class="menu-item">
+        <span>Settings</span>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+    <div class="spacer"></div>
+
+    <a id="logoutButton" class="logout">
+        Log Out
+    </a>
+
+</div>
+
+
+        <div class="overlay" id="sidebarOverlay" hidden></div>
+
+        <main class="main">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar__left">
+                    <div>
+                        <h2>Visitor Registration</h2>
+                    </div>
+                </div>
+
+                <div class="topbar__right">
+
+                    <div class="profile" id="profileWidget">
+                        <button class="profile__button" type="button" id="profileToggle" aria-haspopup="true" aria-expanded="false">
+                            
+                            <span>
+                                <small id="profileUsername">abc@gmail.com</small>
+                                <strong id="profileName">ABC Name</strong>
+                                
+                            </span>
+                            <img alt="Profile picture" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%230B5ED7'/%3E%3Cstop offset='1' stop-color='%230B3C7D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' rx='100' fill='url(%23g)'/%3E%3Ccircle cx='100' cy='82' r='36' fill='white' fill-opacity='.95'/%3E%3Cpath d='M40 180c13-40 41-61 60-61s47 21 60 61' fill='white' fill-opacity='.28'/%3E%3C/svg%3E">
+                        </button>
+
+                        <div class="profile__menu" id="profileMenu" hidden>
+                            <button type="button">View profile</button>
+                            <button type="button">Account settings</button>
+                            <button type="button" id="profileLogout">Sign out</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard content -->
+            <section class="content-card page-fade" aria-label="Visitor registration form">
+
+
+                <form id="visitorForm" class="form-layout" novalidate>
+                    <div class="form-layout__body">
+                        <section class="panel panel--form">
+
+
+                            <div class="grid-fields">
+                                <div class="field">
+                                    <label for="visitorName">Visitor Name</label>
+                                    <input id="visitorName" name="visitorName" type="text" placeholder="Enter visitor name" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="employeeId">Employee ID</label>
+                                    <input id="employeeId" name="employeeId" type="text" placeholder="Host employee ID" required>
+                                </div>
+
+                                <div class="field field--full">
+                                    <label for="address">Address</label>
+                                    <textarea id="address" name="address" placeholder="Visitor address" required></textarea>
+                                </div>
+
+                                <div class="field">
+                                    <label for="company">Company/Firm</label>
+                                    <input id="company" name="company" type="text" placeholder="Company or firm" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="aadhaar">Aadhaar Number</label>
+                                    <input id="aadhaar" name="aadhaar" type="text" inputmode="numeric" placeholder="12-digit Aadhaar" maxlength="12" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="phone">Phone Number</label>
+                                    <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="10-digit mobile number" maxlength="10" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="purpose">Purpose of Visit</label>
+                                    <input id="purpose" name="purpose" type="text" placeholder="Meeting, delivery, inspection" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="department">Department</label>
+                                    <input id="department" name="department" type="text" placeholder="Department name" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="category">Category</label>
+                                    <select id="category" name="category" required>
+                                        <option value="">Select category</option>
+                                        <option>Visitor</option>
+                                        <option>Employee</option>
+                                        <option>Vendor</option>
+                                        <option>Scientist</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label for="verification">Police Verification no.</label>
+                                    <input id="verification" name="verification" type="text" placeholder="Police verification number" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="duration">Today's Duration</label>
+                                    <input id="duration" name="duration" type="text" placeholder="e.g. 2 hours" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="validityFrom">Validity From</label>
+                                    <input id="validityFrom" name="validityFrom" type="date" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="validityTo">Validity To</label>
+                                    <input id="validityTo" name="validityTo" type="date" required>
+                                </div>
+
+                                <div class="field">
+                                    <label for="gender">Gender</label>
+                                    <select id="gender" name="gender" required>
+                                        <option value="">Select gender</option>
+                                        <option>Male</option>
+                                        <option>Female</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label for="nationality">Nationality</label>
+                                    <input id="nationality" name="nationality" type="text" placeholder="Nationality" required>
+                                </div>
+                            </div>
+                        </section>
+
+                        <aside class="panel panel--photo">
+
+
+                            <div class="photo-preview">
+                                <img id="photoPreview" alt="Visitor photo preview" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='520' height='640' viewBox='0 0 520 640'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%23F4F7FB'/%3E%3Cstop offset='1' stop-color='%23DDE4EC'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='520' height='640' rx='36' fill='url(%23g)'/%3E%3Ccircle cx='260' cy='210' r='90' fill='%230B5ED7' fill-opacity='.22'/%3E%3Cpath d='M110 560c25-88 97-140 150-140s125 52 150 140' fill='%230B3C7D' fill-opacity='.18'/%3E%3Ctext x='260' y='348' text-anchor='middle' font-family='Poppins,Arial' font-size='24' fill='%236B7280'%3EVisitor Photo%3C/text%3E%3C/svg%3E">
+                            </div>
+
+                            <div class="photo-actions">
+                                <button type="button" class="btn btn--primary" id="takePhotoButton">Take Photo</button>
+                                <button type="button" class="btn btn--secondary" id="uploadPhotoButton">Upload Photo</button>
+                                <button type="button" class="btn btn--ghost" id="removePhotoButton">Remove Photo</button>
+                            </div>
+
+                            <input id="cameraInput" type="file" accept="image/*" capture="user" hidden>
+                            <input id="uploadInput" type="file" accept="image/*" hidden>
+                        </aside>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="reset" class="btn btn--ghost" id="resetButton">Reset Form</button>
+                        <button type="submit" class="btn btn--save">Save Visitor</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <!-- Success popup -->
+    <div class="toast" id="successToast" role="status" aria-live="polite" aria-atomic="true" hidden>
+        <strong>Success</strong>
+        <p>Visitor details have been saved successfully.</p>
+    </div>
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <i class="fa-solid fa-circle-check success-icon"></i>
+        <h2>Success!</h2>
+        <p>Visitor saved successfully.</p>
+
+        <button id="closeModal">OK</button>
+    </div>
+</div>
+    <script src="script.js"></script>
+</body>
+</html>

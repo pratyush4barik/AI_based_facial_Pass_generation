@@ -1,0 +1,143 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#fff;
+}
+
+/* Top Header */
+
+header{
+    width:100%;
+    height:16px;
+    background:#6887a4c7;
+    color:black;
+    font-size:12px;
+    padding-left:5px;
+    display:flex;
+    align-items:center;
+
+    /* Bottom shadow */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Banner */
+.banner{
+    width: 100%;
+    height: clamp(120px, 14vw, 290px);
+    background-image: url("banner.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+        background-position: center 0%;
+}
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 55vh;
+}
+
+.login-box{
+    width: 500px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 35px 30px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    border: 1px solid #e5e7eb;
+}
+
+.login-box h2{
+    text-align: center;
+    font-size: 40px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 30px;
+}
+
+.login-box label{
+    display: block;
+    font-size: 14px;
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 8px;
+    margin-top: 18px;
+}
+
+.login-box input{
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    font-size: 15px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    outline: none;
+    transition: .3s;
+    margin-bottom: 5px;
+}
+
+.login-box input:focus{
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+}
+
+.login-box button{
+    width: 100%;
+    height: 45px;
+    margin-top: 25px;
+    border: none;
+    border-radius: 8px;
+    background: #1677ff;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.login-box button:hover{
+    background: #0f5fd6;
+}
+
+footer{
+
+    margin-top:50px;
+
+    text-align:center;
+
+    line-height:28px;
+
+    font-size:18px;
+
+}
+
+/* Responsive */
+
+@media(max-width:600px){
+
+.login-box{
+
+    width:90%;
+}
+
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background-image: url("1.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Optional */
+    min-height: 100vh;
+        background-position: center 30%;
+}
