@@ -1,4 +1,5 @@
 from sqlalchemy import create_engine
+from sqlalchemy import text
 from sqlalchemy.orm import sessionmaker
 
 DATABASE_URL = "postgresql://postgres:postgres123@localhost:55432/visit_db"
@@ -17,4 +18,11 @@ def get_db():
         yield db
     finally:
         db.close()
-        
+
+def init_db():
+    from model import Base
+
+    with engine.begin() as connection:
+        connection.execute(text("CREATE EXTENSION IF NOT EXISTS vector"))
+
+    Base.metadata.create_all(bind=engine)

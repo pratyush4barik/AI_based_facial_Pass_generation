@@ -760,7 +760,7 @@ img {
 }
 
 .modal.show{
-    display:flex;
+    display:flex !important;
 }
 
 .modal-content{
@@ -812,6 +812,48 @@ img {
 
     cursor:pointer;
 }
+
+.camera-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.72);
+    z-index: 10000;
+}
+
+.camera-modal.show {
+    display: flex;
+}
+
+.camera-modal__content {
+    width: min(720px, 100%);
+    padding: 16px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+}
+
+.camera-modal video {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    background: #0f172a;
+    object-fit: cover;
+}
+
+.camera-modal__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+}
+
+.camera-modal__actions .btn {
+    width: 100%;
+}
+
 .mini-header {
     height: 18px;
     display: flex;
@@ -826,7 +868,7 @@ img {
 .banner {
     position: relative;
     width: 100%;
-    height: clamp(120px, 15vw, 290px);
+    height: clamp(120px, 15vw, 380px);
     background: url("banner.png") center/cover no-repeat;
     overflow: hidden;
     background-position: top center ;
@@ -1461,13 +1503,13 @@ body.sidebar-collapsed .nav__link {
     align-items: center;
     justify-content: space-between;
 
-    padding: 18px 24px;
+    padding: 12px 24px;
 
     text-decoration: none;
     color: #374151;
 
     font-family: "Inter", sans-serif;
-    font-size: 18px;
+    font-size: 12px;
     font-weight: 600;
 
     transition: all 0.25s ease;
@@ -1488,7 +1530,7 @@ body.sidebar-collapsed .nav__link {
 
 /* Icons */
 .menu-item i {
-    font-size: 20px;
+    font-size: 16px;
     width: 24px;
     text-align: center;
 }

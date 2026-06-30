@@ -25,6 +25,11 @@ function initRegisterPage() {
     const removePhotoButton = document.getElementById("removePhotoButton");
     const cameraInput = document.getElementById("cameraInput");
     const uploadInput = document.getElementById("uploadInput");
+    const cameraModal = document.getElementById("cameraModal");
+    const cameraVideo = document.getElementById("cameraVideo");
+    const cameraCanvas = document.getElementById("cameraCanvas");
+    const capturePhotoButton = document.getElementById("capturePhotoButton");
+    const closeCameraButton = document.getElementById("closeCameraButton");
     const resetButton = document.getElementById("resetButton");
     const successModal = document.getElementById("successModal");
     const closeModalButton = document.getElementById("closeModal");
@@ -33,8 +38,8 @@ function initRegisterPage() {
     const employeeId = document.getElementById("employeeId");
     const address = document.getElementById("address");
     const company = document.getElementById("company");
-    const aadhaarNumber = document.getElementById("aadhaarNumber");
-    const phoneNumber = document.getElementById("phoneNumber");
+    const aadhaarNumber = document.getElementById("aadhaar");
+    const phoneNumber = document.getElementById("phone");
     const purpose = document.getElementById("purpose");
     const department = document.getElementById("department");
     const category = document.getElementById("category");
@@ -67,6 +72,8 @@ function initRegisterPage() {
     const todayIso = getTodayIso();
 
     let toastTimer = null;
+    let selectedPhotoFile = null;
+    let cameraStream = null;
 
     setInputDateBounds(validityFrom, validityTo, todayIso);
     syncProfileHeader();
@@ -81,17 +88,20 @@ function initRegisterPage() {
     safeAddEventListener(sidebarOverlay, "click", closeSidebar);
     safeAddEventListener(profileToggle, "click", toggleProfileMenu);
     safeAddEventListener(logoutButton, "click", handleLogout);
-    safeAddEventListener(takePhotoButton, "click", () => cameraInput?.click());
+    safeAddEventListener(takePhotoButton, "click", openCamera);
     safeAddEventListener(uploadPhotoButton, "click", () => uploadInput?.click());
     safeAddEventListener(removePhotoButton, "click", removePhoto);
     safeAddEventListener(cameraInput, "change", (event) => handlePhotoChange(event));
     safeAddEventListener(uploadInput, "change", (event) => handlePhotoChange(event));
+    safeAddEventListener(capturePhotoButton, "click", capturePhoto);
+    safeAddEventListener(closeCameraButton, "click", closeCamera);
     safeAddEventListener(resetButton, "click", (event) => {
         event.preventDefault();
         resetForm();
     });
     safeAddEventListener(closeModalButton, "click", handleSuccessClose);
     safeAddEventListener(okBtn, "click", handleSuccessClose);
+    safeAddEventListener(profileLogout, "click", handleLogout);
     safeAddEventListener(validityFrom, "change", () => handleValidityChange(validityFrom, validityTo, todayIso));
     safeAddEventListener(validityTo, "change", () => handleValidityChange(validityFrom, validityTo, todayIso));
     safeAddEventListener(document, "click", handleDocumentClick);
@@ -119,13 +129,89 @@ function initRegisterPage() {
     function handleLogout(event) {
         event.preventDefault();
 
-        console.log("Logout function called");
-
+        closeCamera();
         localStorage.clear();
-
         window.location.replace("../login_page/index.html");
-}
     }
+
+    async function openCamera() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            showToast("Live camera is not supported in this browser.", "error");
+            return;
+        }
+
+        try {
+            cameraStream = await navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: "user",
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 },
+                },
+                audio: false,
+            });
+
+            if (cameraVideo) {
+                cameraVideo.srcObject = cameraStream;
+            }
+
+            if (cameraModal) {
+                cameraModal.classList.add("show");
+                cameraModal.setAttribute("aria-hidden", "false");
+            }
+        } catch {
+            showToast("Unable to access the camera. Please allow camera permission.", "error");
+        }
+    }
+
+    function closeCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach((track) => track.stop());
+            cameraStream = null;
+        }
+
+        if (cameraVideo) {
+            cameraVideo.srcObject = null;
+        }
+
+        if (cameraModal) {
+            cameraModal.classList.remove("show");
+            cameraModal.setAttribute("aria-hidden", "true");
+        }
+    }
+
+    function capturePhoto() {
+        if (!cameraVideo || !cameraCanvas || !photoPreview || !cameraVideo.videoWidth) {
+            showToast("Camera is still starting. Please try again.", "error");
+            return;
+        }
+
+        cameraCanvas.width = cameraVideo.videoWidth;
+        cameraCanvas.height = cameraVideo.videoHeight;
+
+        const context = cameraCanvas.getContext("2d");
+        context.drawImage(cameraVideo, 0, 0, cameraCanvas.width, cameraCanvas.height);
+
+        cameraCanvas.toBlob((blob) => {
+            if (!blob) {
+                showToast("Unable to capture photo.", "error");
+                return;
+            }
+
+            selectedPhotoFile = new File([blob], `visitor-${Date.now()}.jpg`, { type: "image/jpeg" });
+            photoPreview.src = URL.createObjectURL(selectedPhotoFile);
+
+            if (cameraInput) {
+                cameraInput.value = "";
+            }
+
+            if (uploadInput) {
+                uploadInput.value = "";
+            }
+
+            closeCamera();
+        }, "image/jpeg", 0.92);
+    }
+
     function handlePhotoChange(event) {
         const input = event.target;
         const file = input && input.files ? input.files[0] : null;
@@ -133,6 +219,8 @@ function initRegisterPage() {
         if (!file || !photoPreview) {
             return;
         }
+
+        selectedPhotoFile = file;
 
         const reader = new FileReader();
         reader.onload = () => {
@@ -153,6 +241,9 @@ function initRegisterPage() {
         if (uploadInput) {
             uploadInput.value = "";
         }
+
+        selectedPhotoFile = null;
+        closeCamera();
     }
 
     function resetForm() {
@@ -172,25 +263,27 @@ function initRegisterPage() {
             return;
         }
 
-        endInput.min = startInput.value || minDate;
+        startInput.removeAttribute("min");
 
-        if (startInput.value && endInput.value && endInput.value < startInput.value) {
-            endInput.setCustomValidity("Validity To must be on or after Validity From.");
+        if (startInput.value) {
+            endInput.min = startInput.value;
         } else {
-            endInput.setCustomValidity("");
+            endInput.removeAttribute("min");
         }
+
+        startInput.setCustomValidity("");
+        endInput.setCustomValidity("");
     }
 
     function handleFormSubmit(event) {
         event.preventDefault();
 
         if (!validateForm()) {
-            showToast("Please complete the highlighted fields.", "error");
             return;
         }
 
-        submitVisitorForm().catch(() => {
-            showToast("Unable to save visitor.", "error");
+        submitVisitorForm().catch((error) => {
+            showToast(error.message || "Unable to save visitor.", "error");
         });
     }
 
@@ -213,12 +306,15 @@ function initRegisterPage() {
             nationality: nationality ? nationality.value.trim() : "",
         };
 
-        const response = await fetch("http://127.0.0.1:8000/visitors", {
+        const formData = new FormData();
+        Object.entries(visitorData).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        formData.append("photo", selectedPhotoFile);
+
+        const response = await fetch("http://localhost:8000/visitors", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(visitorData),
+            body: formData,
         });
 
         let result = {};
@@ -229,10 +325,30 @@ function initRegisterPage() {
         }
 
         if (!response.ok) {
-            throw new Error(result.message || "Unable to save visitor.");
+            throw new Error(getApiErrorMessage(result) || "Unable to save visitor.");
         }
 
         showSuccessModal();
+    }
+
+    function getApiErrorMessage(result) {
+        if (!result) {
+            return "";
+        }
+
+        if (typeof result.message === "string") {
+            return result.message;
+        }
+
+        if (Array.isArray(result.detail) && result.detail.length > 0) {
+            return result.detail.map((item) => item.msg || "Invalid field value.").join(" ");
+        }
+
+        if (typeof result.detail === "string") {
+            return result.detail;
+        }
+
+        return "";
     }
 
     function validateForm() {
@@ -277,9 +393,13 @@ function initRegisterPage() {
         }
 
         if (validityFrom && validityTo && validityFrom.value && validityTo.value && validityTo.value < validityFrom.value) {
-            validityTo.setCustomValidity("Validity To must be on or after Validity From.");
+            validityTo.value = validityFrom.value;
+            validityTo.setCustomValidity("");
             validityTo.reportValidity();
-            validityTo.focus();
+        }
+
+        if (!selectedPhotoFile) {
+            showToast("Please take or upload a visitor photo.", "error");
             return false;
         }
 
@@ -293,7 +413,7 @@ function initRegisterPage() {
         }
 
         successModal.classList.add("show");
-        showToast("Visitor saved successfully.", "success");
+        successModal.setAttribute("aria-hidden", "false");
     }
 
     function hideSuccessModal() {
@@ -302,6 +422,7 @@ function initRegisterPage() {
         }
 
         successModal.classList.remove("show");
+        successModal.setAttribute("aria-hidden", "true");
     }
 
     function toggleSidebar() {
@@ -431,7 +552,6 @@ function initRegisterPage() {
         }
 
         const isoDate = getTodayIso();
-        input.min = isoDate;
         input.value = isoDate;
         return isoDate;
     }
@@ -441,8 +561,10 @@ function initRegisterPage() {
             return;
         }
 
-        const startIso = setToday(startInput) || minDate;
-        endInput.min = startIso;
+        setToday(startInput);
+        setToday(endInput);
+        startInput.removeAttribute("min");
+        endInput.removeAttribute("min");
     }
 
     function getTodayIso() {
@@ -495,3 +617,4 @@ function initRegisterPage() {
         topbarLeft.prepend(button);
         return button;
     }
+}

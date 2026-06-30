@@ -227,13 +227,23 @@
         <strong>Success</strong>
         <p>Visitor details have been saved successfully.</p>
     </div>
-<div id="successModal" class="modal">
+<div id="successModal" class="modal" aria-hidden="true">
     <div class="modal-content">
         <i class="fa-solid fa-circle-check success-icon"></i>
         <h2>Success!</h2>
         <p>Visitor saved successfully.</p>
 
         <button id="closeModal">OK</button>
+    </div>
+</div>
+<div id="cameraModal" class="camera-modal" aria-hidden="true">
+    <div class="camera-modal__content">
+        <video id="cameraVideo" autoplay playsinline></video>
+        <canvas id="cameraCanvas" hidden></canvas>
+        <div class="camera-modal__actions">
+            <button type="button" class="btn btn--primary" id="capturePhotoButton">Capture</button>
+            <button type="button" class="btn btn--ghost" id="closeCameraButton">Cancel</button>
+        </div>
     </div>
 </div>
     <script src="script.js"></script>
