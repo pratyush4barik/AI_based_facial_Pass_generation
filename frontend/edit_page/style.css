@@ -1,0 +1,159 @@
+/* ============================================================
+   Edit Page — Specific Styles
+   Uses the project's existing color palette:
+     --primary:      #0B5ED7
+     --primary-dark: #0B3C7D
+     --bg:           #F4F7FB
+     --card:         #FFFFFF
+     --border:       #DDE4EC
+     --text:         #1F2937
+     --muted:        #6B7280
+   ============================================================ */
+
+.edit-page {
+    padding: 0 24px 40px;
+    min-height: 100%;
+}
+
+/* ---- Search Bar Section ---- */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    background: var(--card, #fff);
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid var(--border, #DDE4EC);
+    box-shadow: 0 4px 12px rgba(11, 62, 125, 0.04);
+}
+
+.search-input {
+    flex: 1;
+    height: 48px;
+    padding: 0 16px;
+    font-size: 1rem;
+    color: var(--text, #1F2937);
+    background: #f8fafc;
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.search-input:focus {
+    border-color: var(--primary, #0B5ED7);
+    box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.12);
+}
+
+.search-btn {
+    height: 48px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary, #0B5ED7);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 4px 10px rgba(11, 94, 215, 0.15);
+}
+
+.search-btn:hover {
+    background: var(--primary-dark, #0B3C7D);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(11, 94, 215, 0.2);
+}
+
+.search-btn:active {
+    transform: translateY(0);
+}
+
+/* ---- Data Table Additional Styles ---- */
+.table-card {
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(11, 62, 125, 0.04);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: linear-gradient(180deg, var(--primary, #0B5ED7), #0a56c4);
+    color: white;
+}
+
+th {
+    padding: 16px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 16px 20px;
+    text-align: left;
+    font-size: 0.95rem;
+    color: var(--text, #1F2937);
+    border-bottom: 1px solid #f0f2f5;
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: background 180ms ease;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tbody tr:hover {
+    background: rgba(11, 94, 215, 0.04);
+}
+
+/* Edit Pill Button */
+.btn-edit-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 16px;
+    background: #eef4ff;
+    color: var(--primary, #0B5ED7);
+    border: 1px solid #cfe0ff;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 180ms ease, transform 180ms ease;
+}
+
+.btn-edit-pill:hover {
+    background: #dbe8ff;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+    .edit-page {
+        padding: 0 14px 30px;
+    }
+    
+    .search-container {
+        flex-direction: column;
+        padding: 14px;
+    }
+
+    .search-btn {
+        width: 100%;
+    }
+}

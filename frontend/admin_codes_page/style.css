@@ -1,0 +1,376 @@
+/* ============================================================
+   Admin Codes Page — Redesigned Layout
+   Uses the project's existing color palette exclusively:
+     --primary:      #0B5ED7
+     --primary-dark: #0B3C7D
+     --bg:           #F4F7FB
+     --card:         #FFFFFF
+     --border:       #DDE4EC
+     --text:         #1F2937
+     --muted:        #6B7280
+   ============================================================ */
+
+/* ---- Page Container ---- */
+.admin-page {
+    padding: 0 24px 40px;
+    min-height: 100%;
+}
+
+/* ---- Instructions List ---- */
+.admin-instructions {
+    list-style: disc;
+    padding-left: 22px;
+    margin: 0 0 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.admin-instructions li {
+    color: var(--muted, #6B7280);
+    font-size: 0.94rem;
+    line-height: 1.5;
+}
+
+.admin-instructions li strong {
+    color: var(--text, #1F2937);
+}
+
+/* ---- Page Header ---- */
+.page-header {
+    margin-bottom: 6px;
+}
+
+.page-header h2 {
+    font-size: 30px;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    color: #666;
+    margin: 4px 0;
+}
+
+/* ---- Key + Timer Card ---- */
+.active-key-card {
+    display: flex;
+    align-items: stretch;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 14px;
+    margin-top: 25px;
+    box-shadow: 0 8px 24px rgba(11, 62, 125, 0.07);
+    overflow: hidden;
+    transition: box-shadow 280ms ease;
+}
+
+.active-key-card:hover {
+    box-shadow: 0 12px 32px rgba(11, 62, 125, 0.12);
+}
+
+/* Left section: Key */
+.key-section {
+    flex: 1;
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Right section: Timer */
+.timer-section {
+    width: 200px;
+    flex-shrink: 0;
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(180deg, #f8fbff 0%, #f0f5fc 100%);
+}
+
+/* Vertical Divider */
+.card-divider {
+    width: 1px;
+    background: var(--border, #DDE4EC);
+    align-self: stretch;
+}
+
+/* Labels */
+.section-label-text {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted, #6B7280);
+}
+
+/* ---- Key Character Boxes ---- */
+.key-display {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.key-boxes {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.key-char {
+    width: 44px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: 1.5px solid var(--border, #DDE4EC);
+    background: #f8fafc;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary, #0B5ED7);
+    letter-spacing: 1px;
+    transition: border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    font-family: "Poppins", monospace;
+}
+
+.key-char.filled {
+    border-color: var(--primary, #0B5ED7);
+    background: #eef4ff;
+    transform: translateY(-1px);
+}
+
+.key-hyphen {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--muted, #6B7280);
+    padding: 0 2px;
+    user-select: none;
+}
+
+/* Copy button */
+.copy-btn {
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--primary, #0B5ED7);
+    color: white;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 6px 14px rgba(11, 94, 215, 0.18);
+}
+
+.copy-btn:hover {
+    background: var(--primary-dark, #0B3C7D);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(11, 94, 215, 0.26);
+}
+
+.copy-btn:active {
+    transform: translateY(0);
+}
+
+/* ---- Timer ---- */
+.timer-value {
+    color: #ff3b30;
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 2px;
+}
+
+/* ---- Generate Key Button ---- */
+.generate-btn {
+    margin-top: 28px;
+    width: 100%;
+    height: 56px;
+    background: linear-gradient(180deg, var(--primary, #0B5ED7), #0a56c4);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    letter-spacing: 0.02em;
+    transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 10px 24px rgba(11, 94, 215, 0.2);
+}
+
+.generate-btn:hover {
+    background: linear-gradient(180deg, #0a56c4, var(--primary-dark, #0B3C7D));
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(11, 94, 215, 0.28);
+}
+
+.generate-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 14px rgba(11, 94, 215, 0.18);
+}
+
+.generate-btn i {
+    font-size: 1.1rem;
+}
+
+/* ---- Data Table ---- */
+.table-card {
+    margin-top: 32px;
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(11, 62, 125, 0.07);
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: linear-gradient(180deg, var(--primary, #0B5ED7), #0a56c4);
+    color: white;
+}
+
+th {
+    padding: 16px 20px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 0.92rem;
+    color: var(--text, #1F2937);
+    border-bottom: 1px solid #f0f2f5;
+}
+
+tbody tr {
+    transition: background 180ms ease;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tbody tr:hover {
+    background: rgba(11, 94, 215, 0.04);
+}
+
+/* Status badges */
+.status {
+    padding: 5px 14px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    display: inline-block;
+}
+
+.active {
+    background: #28a745;
+}
+
+.used {
+    background: #17a2b8;
+}
+
+.expired {
+    background: #dc3545;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+    .active-key-card {
+        flex-direction: column;
+    }
+
+    .card-divider {
+        width: 100%;
+        height: 1px;
+    }
+
+    .timer-section {
+        width: 100%;
+        padding: 22px 28px;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .key-char {
+        width: 36px;
+        height: 44px;
+        font-size: 1.1rem;
+    }
+
+    .key-display {
+        gap: 10px;
+    }
+
+    .key-boxes {
+        gap: 4px;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-page {
+        padding: 0 14px 30px;
+    }
+
+    .key-section {
+        padding: 20px 16px;
+    }
+
+    .timer-section {
+        padding: 18px 16px;
+    }
+
+    .key-char {
+        width: 30px;
+        height: 38px;
+        font-size: 0.95rem;
+        border-radius: 6px;
+    }
+
+    .key-hyphen {
+        font-size: 1.2rem;
+        padding: 0;
+    }
+
+    .copy-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 14px;
+    }
+
+    .timer-value {
+        font-size: 2rem;
+    }
+
+    .generate-btn {
+        height: 50px;
+        font-size: 0.95rem;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        font-size: 0.82rem;
+    }
+}

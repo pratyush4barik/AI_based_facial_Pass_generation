@@ -1,7 +1,8 @@
 from numpy import integer
 from pgvector.sqlalchemy import Vector
-from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Date, DateTime,Integer,String, Text
+from sqlalchemy.orm import declarative_base, relationship
+from database import Base
+from sqlalchemy import Column, Date, DateTime,Integer,String, Text, Boolean, ForeignKey
 
 Base = declarative_base()
 
@@ -18,10 +19,15 @@ class SO(Base):
     __tablename__="security_officers"
 
     officer_id = Column(Integer,primary_key=True,index=True)
-    admin_id = Column(Integer)
     name = Column(String)
     username = Column(String,unique=True,index=True)
     password_hash = Column(String)
+    created_at = Column(DateTime)
+    admin_keys = Column(String)
+    used_keys =relationship(
+        "AdminKey",
+        back_populates="security_officer"
+    )
 
 class Visitor(Base):
     __tablename__ = "visitors"
@@ -48,3 +54,47 @@ class Visitor(Base):
     photo_path = Column(Text, nullable=True)
     registered_by = Column(Integer)
     created_at = Column(DateTime)
+    edited_by = Column(String, nullable=True)
+    edited_at = Column(DateTime, nullable=True)
+
+
+class AdminKey(Base):
+    __tablename__ = "admin_keys"
+
+    key_id = Column(Integer, primary_key=True, index=True)
+    
+    admin_id = Column(Integer, ForeignKey("admins.admin_id"))
+
+    admin_key = Column(String(11), unique=True, nullable=False)
+
+    generated_at = Column(DateTime)
+
+    expires_at = Column(DateTime)
+
+    used = Column(Boolean, default=False)
+
+    used_by = Column(
+        Integer,
+        ForeignKey("security_officers.officer_id"),
+        nullable=True
+    )
+
+    used_at = Column(DateTime, nullable=True)
+
+    security_officer = relationship(
+        "SO",
+        back_populates="used_keys"
+        )
+    
+
+#     SO
+#  │
+#  │ used_keys
+#  ▼
+# AdminKey
+
+# AdminKey
+#  │
+#  │ security_officer
+#  ▼
+# SO

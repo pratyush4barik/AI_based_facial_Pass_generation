@@ -21,3 +21,13 @@ class VisitorCreate(BaseModel):
     validity_to: date
     gender: str
     nationality: str
+
+class UseKeyRequest(BaseModel):
+    admin_key: str  
+
+class SORegister(BaseModel):
+
+    name:str
+    username:str
+    password:str
+    admin_keys:str

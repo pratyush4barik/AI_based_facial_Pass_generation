@@ -4,13 +4,16 @@ from uuid import uuid4
 from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-
+from sqlalchemy import or_ 
 from model import Visitor
 from database import get_db, init_db
 from model import Admin
 from model import SO
 from schemas import LoginRequest
 from datetime import date, datetime, timedelta
+from routers.admin_keys import router as admin_router
+from routers.so_register import router as so_router
+
 
 app = FastAPI()
 PHOTOS_DIR = Path(__file__).resolve().parent / "photos"
@@ -69,7 +72,6 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
             "success": True,
             "role": "security_officer",
             "officer_id": so.officer_id,
-            "admin_id": so.admin_id,
             "name": so.name,
             "username": so.username
         }
@@ -213,3 +215,89 @@ async def create_visitor(
         "visitor_id": new_visitor.visitor_id,
         "photo_path": new_visitor.photo_path
     }
+
+
+from sqlalchemy import or_
+
+@app.get("/visitors")
+def get_visitors(search: str = "", db: Session = Depends(get_db)):
+
+    query = db.query(Visitor)
+
+    if search:
+
+        query = query.filter(
+
+            or_(
+
+                Visitor.emp_id.ilike(f"%{search}%"),
+
+                Visitor.full_name.ilike(f"%{search}%"),
+
+                Visitor.aadhaar_number.ilike(f"%{search}%")
+
+            )
+
+        )
+
+    visitors = query.all()
+
+    result = []
+
+    for v in visitors:
+
+        result.append({
+
+            "visitor_id": v.visitor_id,
+
+            "emp_id": v.emp_id,
+
+            "full_name": v.full_name,
+
+            "aadhaar_number": v.aadhaar_number,
+
+            "edited_by": v.edited_by
+
+        })
+
+    return result
+
+@app.get("/visitors/{visitor_id}")
+def get_visitor(visitor_id: int, db: Session = Depends(get_db)):
+
+    visitor = (
+        db.query(Visitor)
+        .filter(Visitor.visitor_id == visitor_id)
+        .first()
+    )
+
+    if visitor is None:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+
+    return {
+        "visitor_id": visitor.visitor_id,
+        "full_name": visitor.full_name,
+        "emp_id": visitor.emp_id,
+        "address": visitor.address,
+        "company_firm": visitor.company_firm,
+        "aadhaar_number": visitor.aadhaar_number,
+        "phone": visitor.phone,
+        "purpose": visitor.purpose,
+        "department": visitor.department,
+        "category": visitor.category,
+        "police_verification_no": visitor.police_verification_no,
+        "duration": visitor.duration,
+        "validity_from": visitor.validity_from,
+        "validity_to": visitor.validity_to,
+        "gender": visitor.gender,
+        "nationality": visitor.nationality,
+        "photo_path": visitor.photo_path,
+        "registered_by": visitor.registered_by,
+        "created_at": visitor.created_at,
+        "edited_by": visitor.edited_by,
+        "edited_at": visitor.edited_at
+    }
+app.include_router(admin_router)
+
+app.include_router(so_router)
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <header>
+        <span>Login portal </span>
+    </header>
+
+    <!-- Banner -->
+    <div class="banner"></div>
+
+    <!-- Login Box (Reused structure) -->
+    <div class="container">
+
+        <div class="login-box">
+
+            <h2>Officer Registration</h2>
+
+            <form id="registerForm">
+                <label>Full Name</label>
+                <input type="text" id="name" placeholder="John Doe">
+
+                <label>Username</label>
+                <input type="text" id="username" placeholder="abc@gmail.com">
+
+                <label>Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password" placeholder="Password">
+                    <i class="fa-regular fa-eye toggle-password" id="togglePasswordBtn"></i>
+                </div>
+               
+                <label>Confirm Password</label>
+                <div class="password-wrapper">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password">
+                    <i class="fa-regular fa-eye toggle-password" id="toggleConfirmPasswordBtn"></i>
+                </div>
+
+                <label>Admin Code</label>
+                <input type="text" id="adminKey" placeholder="XXXXX-XXXXX">
+               
+                <button type="submit" id="createAccountBtn">Create Account</button>
+            </form>
+
+            <div class="footer-link">
+                <a href="../login_page/index.html">Already have an account? Back to Login</a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>Terms & Conditions</p>
+        <p>Policy</p>
+    </footer>
+
+<script src="script.js"></script>
+</body>
+</html>

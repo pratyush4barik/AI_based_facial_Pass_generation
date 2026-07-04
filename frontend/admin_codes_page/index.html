@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Codes — Visitor Pass Management Portal</title>
+    <meta name="description" content="Generate and manage admin access codes for the Visitor Pass Management Portal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../register_page/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Thin top breadcrumb strip -->
+    <header class="mini-header" aria-label="Breadcrumb">
+        <span>Login Portal &gt; Register</span>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner" aria-label="Portal banner">
+        <div class="banner__overlay"></div>
+    </section>
+
+    <div class="app" id="appRoot">
+        <!-- Sidebar navigation -->
+        <div class="sidebar">
+            <a href="../register_page/index.html" class="menu-item">
+                <span>Register</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="../edit_page/index.html" class="menu-item">
+                <span>Edit</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Model</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Pass Print</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item active">
+                <span>Admin Codes</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Blacklist</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <div class="spacer"></div>
+            <a id="logoutButton" class="logout">Log Out</a>
+        </div>
+
+        <div class="overlay" id="sidebarOverlay" hidden></div>
+
+        <main class="main">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar__left">
+                    <div>
+                        <h2>Admin Codes</h2>
+                    </div>
+                </div>
+                <div class="topbar__right">
+                    <div class="profile" id="profileWidget">
+                        <button class="profile__button" type="button" id="profileToggle" aria-haspopup="true" aria-expanded="false">
+                            <span>
+                                <small id="profileUsername">abc@gmail.com</small>
+                                <strong id="profileName">ABC Name</strong>
+                            </span>
+                            <img alt="Profile picture" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%230B5ED7'/%3E%3Cstop offset='1' stop-color='%230B3C7D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' rx='100' fill='url(%23g)'/%3E%3Ccircle cx='100' cy='82' r='36' fill='white' fill-opacity='.95'/%3E%3Cpath d='M40 180c13-40 41-61 60-61s47 21 60 61' fill='white' fill-opacity='.28'/%3E%3C/svg%3E">
+                        </button>
+                        <div class="profile__menu" id="profileMenu" hidden>
+                            <button type="button">View profile</button>
+                            <button type="button">Account settings</button>
+                            <button type="button" id="profileLogout">Sign out</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard content -->
+            <section class="content-card">
+                <div class="admin-page">
+
+                    <!-- Instructions -->
+                    <div class="page-header">
+                        <ul class="admin-instructions">
+                            <li>Key is valid for <strong>30 seconds</strong> only.</li>
+                            <li><strong>1 user</strong> can only access the key.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Key & Timer Display -->
+                    <div class="active-key-card" id="activeKeyCard">
+
+                        <!-- Left: Key Display -->
+                        <div class="key-section">
+                            <span class="section-label-text">Key</span>
+                            <div class="key-display">
+                                <div class="key-boxes" id="keyBoxes">
+                                    <span class="key-char" id="keyChar1">—</span>
+                                    <span class="key-char" id="keyChar2">—</span>
+                                    <span class="key-char" id="keyChar3">—</span>
+                                    <span class="key-char" id="keyChar4">—</span>
+                                    <span class="key-char" id="keyChar5">—</span>
+                                    <span class="key-hyphen">-</span>
+                                    <span class="key-char" id="keyChar6">—</span>
+                                    <span class="key-char" id="keyChar7">—</span>
+                                    <span class="key-char" id="keyChar8">—</span>
+                                    <span class="key-char" id="keyChar9">—</span>
+                                    <span class="key-char" id="keyChar10">—</span>
+                                </div>
+                                <button class="copy-btn" id="copyBtn" type="button" title="Copy key to clipboard" aria-label="Copy key">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Vertical Divider -->
+                        <div class="card-divider"></div>
+
+                        <!-- Right: Timer Display -->
+                        <div class="timer-section">
+                            <span class="section-label-text">Timer</span>
+                            <h2 class="timer-value" id="timer">00:30</h2>
+                        </div>
+                    </div>
+
+                    <!-- Generate Key Button -->
+                    <button class="generate-btn" id="generateBtn" type="button">
+                        <i class="fa-solid fa-key"></i>
+                        Generate Key
+                    </button>
+
+                    <!-- Data Table -->
+                    <div class="table-card" id="tableCard">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Sl no.</th>
+                                    <th>Admin keys</th>
+                                    <th>Used by</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTable">
+                                <!-- Rows will be inserted by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

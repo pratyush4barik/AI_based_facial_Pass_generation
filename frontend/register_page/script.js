@@ -1,3 +1,38 @@
+const API = "http://127.0.0.1:8000";
+
+const params = new URLSearchParams(window.location.search);
+const visitorId = params.get("visitor_id");
+console.log(visitorId);
+if (visitorId) {
+
+    fetch(`${API}/visitors/${visitorId}`,{
+
+        method:"PUT",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(formData)
+
+    });
+
+}
+else{
+
+    fetch(`${API}/register`,{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(formData)
+
+    });
+
+}
 if (!localStorage.getItem("username")) {
     localStorage.clear();
     window.location.replace("../login_page/index.html");
@@ -270,7 +305,7 @@ function initRegisterPage() {
         } else {
             endInput.removeAttribute("min");
         }
-
+    document.getElementById("validityFrom").value = data.validity_from ? data.validity_from.split("T")[0] : "";
         startInput.setCustomValidity("");
         endInput.setCustomValidity("");
     }
@@ -312,10 +347,22 @@ function initRegisterPage() {
         });
         formData.append("photo", selectedPhotoFile);
 
-        const response = await fetch("http://localhost:8000/visitors", {
-            method: "POST",
-            body: formData,
+        let response;
+        if (visitorId) {
+
+            response = await fetch(`${API}/visitors/${visitorId}`, {
+            method: "PUT",
+            body: formData
         });
+
+        } else {
+
+            response = await fetch(`${API}/visitors`, {
+            method: "POST",
+            body: formData
+        });
+
+}
 
         let result = {};
         try {
@@ -618,3 +665,49 @@ function initRegisterPage() {
         return button;
     }
 }
+
+async function loadVisitorForEdit() {
+
+    if (!visitorId) return;
+
+    const response = await fetch(`${API}/visitors/${visitorId}`);
+
+    if (!response.ok) {
+        alert("Visitor not found");
+        return;
+    }
+
+    const data = await response.json();
+
+    console.log(data);
+
+    document.getElementById("visitorName").value = data.full_name;
+    document.getElementById("employeeId").value = data.emp_id;
+    document.getElementById("address").value = data.address;
+    document.getElementById("company").value = data.company_firm;
+    document.getElementById("aadhaar").value = data.aadhaar_number;
+    document.getElementById("phone").value = data.phone;
+    document.getElementById("purpose").value = data.purpose;
+    document.getElementById("department").value = data.department;
+    document.getElementById("category").value = data.category;
+    document.getElementById("verification").value = data.police_verification_no;
+    document.getElementById("duration").value = data.duration;
+    document.getElementById("validityFrom").value = data.validity_from;
+    document.getElementById("validityTo").value = data.validity_to;
+    document.getElementById("gender").value = data.gender;
+    document.getElementById("nationality").value = data.nationality;
+
+
+}
+if (data.photo_path) {
+
+    photoPreview.src =
+        `${API}/${data.photo_path}`;
+
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+
+    loadVisitorForEdit();
+
+});
