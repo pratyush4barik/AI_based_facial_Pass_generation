@@ -2,37 +2,7 @@ const API = "http://127.0.0.1:8000";
 
 const params = new URLSearchParams(window.location.search);
 const visitorId = params.get("visitor_id");
-console.log(visitorId);
-if (visitorId) {
 
-    fetch(`${API}/visitors/${visitorId}`,{
-
-        method:"PUT",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify(formData)
-
-    });
-
-}
-else{
-
-    fetch(`${API}/register`,{
-
-        method:"POST",
-
-        headers:{
-            "Content-Type":"application/json"
-        },
-
-        body:JSON.stringify(formData)
-
-    });
-
-}
 if (!localStorage.getItem("username")) {
     localStorage.clear();
     window.location.replace("../login_page/index.html");
@@ -108,6 +78,7 @@ function initRegisterPage() {
 
     let toastTimer = null;
     let selectedPhotoFile = null;
+    let existingPhotoPath = "";
     let cameraStream = null;
 
     setInputDateBounds(validityFrom, validityTo, todayIso);
@@ -143,6 +114,54 @@ function initRegisterPage() {
     safeAddEventListener(form, "submit", handleFormSubmit);
     safeAddEventListener(phoneNumber, "input", () => clearFieldValidity(phoneNumber));
     safeAddEventListener(aadhaarNumber, "input", () => clearFieldValidity(aadhaarNumber));
+
+    loadVisitorForEdit().catch((error) => {
+        showToast(error.message || "Unable to load visitor details.", "error");
+    });
+
+    async function loadVisitorForEdit() {
+        if (!visitorId) {
+            return;
+        }
+
+        const response = await fetch(`${API}/visitors/${visitorId}`);
+
+        let data = {};
+        try {
+            data = await response.json();
+        } catch {
+            data = {};
+        }
+
+        if (!response.ok) {
+            throw new Error(getApiErrorMessage(data) || "Visitor not found.");
+        }
+
+        if (visitorName) visitorName.value = data.full_name ?? "";
+        if (employeeId) employeeId.value = data.emp_id ?? "";
+        if (address) address.value = data.address ?? "";
+        if (company) company.value = data.company_firm ?? "";
+        if (aadhaarNumber) aadhaarNumber.value = data.aadhaar_number ?? "";
+        if (phoneNumber) phoneNumber.value = data.phone ?? "";
+        if (purpose) purpose.value = data.purpose ?? "";
+        if (department) department.value = data.department ?? "";
+        if (category) category.value = data.category ?? "";
+        if (verification) verification.value = data.police_verification_no ?? "";
+        if (duration) duration.value = data.duration ?? "";
+        if (validityFrom) validityFrom.value = data.validity_from?.split("T")[0] ?? "";
+        if (validityTo) validityTo.value = data.validity_to?.split("T")[0] ?? "";
+        if (gender) gender.value = data.gender ?? "";
+        if (nationality) nationality.value = data.nationality ?? "";
+
+        existingPhotoPath = data.photo_path ?? "";
+        selectedPhotoFile = null;
+
+        if (photoPreview && existingPhotoPath) {
+            photoPreview.src = `${API}/${existingPhotoPath}`;
+        }
+
+        handleValidityChange(validityFrom, validityTo, todayIso);
+    }
 
     function handleDocumentClick(event) {
         if (profileWidget && !profileWidget.contains(event.target)) {
@@ -187,6 +206,8 @@ function initRegisterPage() {
 
             if (cameraVideo) {
                 cameraVideo.srcObject = cameraStream;
+                cameraVideo.muted = true;
+                await cameraVideo.play();
             }
 
             if (cameraModal) {
@@ -214,8 +235,22 @@ function initRegisterPage() {
         }
     }
 
-    function capturePhoto() {
-        if (!cameraVideo || !cameraCanvas || !photoPreview || !cameraVideo.videoWidth) {
+    async function capturePhoto() {
+        if (!cameraVideo || !cameraCanvas || !photoPreview) {
+            showToast("Camera is still starting. Please try again.", "error");
+            return;
+        }
+
+        if (!cameraVideo.videoWidth || cameraVideo.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+            try {
+                await waitForVideoFrame(cameraVideo);
+            } catch {
+                showToast("Camera is still starting. Please try again.", "error");
+                return;
+            }
+        }
+
+        if (!cameraVideo.videoWidth) {
             showToast("Camera is still starting. Please try again.", "error");
             return;
         }
@@ -233,6 +268,7 @@ function initRegisterPage() {
             }
 
             selectedPhotoFile = new File([blob], `visitor-${Date.now()}.jpg`, { type: "image/jpeg" });
+            existingPhotoPath = "";
             photoPreview.src = URL.createObjectURL(selectedPhotoFile);
 
             if (cameraInput) {
@@ -247,6 +283,35 @@ function initRegisterPage() {
         }, "image/jpeg", 0.92);
     }
 
+    function waitForVideoFrame(video) {
+        return new Promise((resolve, reject) => {
+            const timeout = window.setTimeout(() => {
+                cleanup();
+                reject(new Error("Camera preview timed out."));
+            }, 2500);
+
+            function cleanup() {
+                window.clearTimeout(timeout);
+                video.removeEventListener("loadedmetadata", handleReady);
+                video.removeEventListener("canplay", handleReady);
+            }
+
+            function handleReady() {
+                cleanup();
+                resolve();
+            }
+
+            if (video.videoWidth) {
+                cleanup();
+                resolve();
+                return;
+            }
+
+            video.addEventListener("loadedmetadata", handleReady);
+            video.addEventListener("canplay", handleReady);
+        });
+    }
+
     function handlePhotoChange(event) {
         const input = event.target;
         const file = input && input.files ? input.files[0] : null;
@@ -256,6 +321,7 @@ function initRegisterPage() {
         }
 
         selectedPhotoFile = file;
+        existingPhotoPath = "";
 
         const reader = new FileReader();
         reader.onload = () => {
@@ -278,6 +344,7 @@ function initRegisterPage() {
         }
 
         selectedPhotoFile = null;
+        existingPhotoPath = "";
         closeCamera();
     }
 
@@ -305,7 +372,7 @@ function initRegisterPage() {
         } else {
             endInput.removeAttribute("min");
         }
-    document.getElementById("validityFrom").value = data.validity_from ? data.validity_from.split("T")[0] : "";
+
         startInput.setCustomValidity("");
         endInput.setCustomValidity("");
     }
@@ -339,30 +406,30 @@ function initRegisterPage() {
             validity_to: validityTo ? validityTo.value : "",
             gender: gender ? gender.value.trim() : "",
             nationality: nationality ? nationality.value.trim() : "",
+            edited_by: localStorage.getItem("username") || "admin",
         };
 
         const formData = new FormData();
         Object.entries(visitorData).forEach(([key, value]) => {
             formData.append(key, value);
         });
-        formData.append("photo", selectedPhotoFile);
+
+        if (selectedPhotoFile) {
+            formData.append("photo", selectedPhotoFile);
+        }
 
         let response;
         if (visitorId) {
-
             response = await fetch(`${API}/visitors/${visitorId}`, {
-            method: "PUT",
-            body: formData
-        });
-
+                method: "PUT",
+                body: formData
+            });
         } else {
-
             response = await fetch(`${API}/visitors`, {
-            method: "POST",
-            body: formData
-        });
-
-}
+                method: "POST",
+                body: formData
+            });
+        }
 
         let result = {};
         try {
@@ -445,7 +512,7 @@ function initRegisterPage() {
             validityTo.reportValidity();
         }
 
-        if (!selectedPhotoFile) {
+        if (!selectedPhotoFile && !existingPhotoPath) {
             showToast("Please take or upload a visitor photo.", "error");
             return false;
         }
@@ -665,49 +732,3 @@ function initRegisterPage() {
         return button;
     }
 }
-
-async function loadVisitorForEdit() {
-
-    if (!visitorId) return;
-
-    const response = await fetch(`${API}/visitors/${visitorId}`);
-
-    if (!response.ok) {
-        alert("Visitor not found");
-        return;
-    }
-
-    const data = await response.json();
-
-    console.log(data);
-
-    document.getElementById("visitorName").value = data.full_name;
-    document.getElementById("employeeId").value = data.emp_id;
-    document.getElementById("address").value = data.address;
-    document.getElementById("company").value = data.company_firm;
-    document.getElementById("aadhaar").value = data.aadhaar_number;
-    document.getElementById("phone").value = data.phone;
-    document.getElementById("purpose").value = data.purpose;
-    document.getElementById("department").value = data.department;
-    document.getElementById("category").value = data.category;
-    document.getElementById("verification").value = data.police_verification_no;
-    document.getElementById("duration").value = data.duration;
-    document.getElementById("validityFrom").value = data.validity_from;
-    document.getElementById("validityTo").value = data.validity_to;
-    document.getElementById("gender").value = data.gender;
-    document.getElementById("nationality").value = data.nationality;
-
-
-}
-if (data.photo_path) {
-
-    photoPreview.src =
-        `${API}/${data.photo_path}`;
-
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-
-    loadVisitorForEdit();
-
-});

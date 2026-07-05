@@ -3,6 +3,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy import or_ 
 from model import Visitor
@@ -18,6 +19,8 @@ from routers.so_register import router as so_router
 app = FastAPI()
 PHOTOS_DIR = Path(__file__).resolve().parent / "photos"
 face_app = None
+PHOTOS_DIR.mkdir(exist_ok=True)
+app.mount("/photos", StaticFiles(directory=PHOTOS_DIR), name="photos")
 
 @app.on_event("startup")
 def on_startup():
@@ -216,6 +219,82 @@ async def create_visitor(
         "photo_path": new_visitor.photo_path
     }
 
+@app.put("/visitors/{visitor_id}")
+async def update_visitor(
+    visitor_id: int,
+    full_name: str = Form(...),
+    emp_id: str = Form(...),
+    address: str = Form(...),
+    company_firm: str = Form(...),
+    aadhaar_number: str = Form(...),
+    phone: str = Form(...),
+    purpose: str = Form(...),
+    department: str = Form(...),
+    category: str = Form(...),
+    police_verification_no: str = Form(...),
+    duration: str | None = Form(None),
+    validity_from: date = Form(...),
+    validity_to: date = Form(...),
+    gender: str = Form(...),
+    nationality: str = Form(...),
+    edited_by: str | None = Form(None),
+    photo: UploadFile | None = File(None),
+    db: Session = Depends(get_db)
+):
+    visitor = (
+        db.query(Visitor)
+        .filter(Visitor.visitor_id == visitor_id)
+        .first()
+    )
+
+    if visitor is None:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+
+    new_photo_path = None
+    new_embedding = None
+
+    if photo is not None and photo.filename:
+        new_photo_path = await save_photo(photo)
+        try:
+            new_embedding = create_embedding(new_photo_path)
+        except HTTPException:
+            new_photo_path.unlink(missing_ok=True)
+            raise
+
+    visitor.full_name = full_name
+    visitor.emp_id = emp_id
+    visitor.address = address
+    visitor.company_firm = company_firm
+    visitor.aadhaar_number = aadhaar_number
+    visitor.phone = phone
+    visitor.purpose = purpose
+    visitor.department = department
+    visitor.category = category
+    visitor.police_verification_no = police_verification_no
+    visitor.duration = duration
+    visitor.validity_from = validity_from
+    visitor.validity_to = validity_to
+    visitor.gender = gender
+    visitor.nationality = nationality
+    visitor.edited_at = datetime.utcnow()
+    visitor.edited_by = edited_by or visitor.edited_by or "admin"
+
+    if new_photo_path is not None:
+        visitor.photo_path = f"photos/{new_photo_path.name}"
+        visitor.embedding = new_embedding
+
+    try:
+        db.commit()
+    except Exception:
+        db.rollback()
+        if new_photo_path is not None:
+            new_photo_path.unlink(missing_ok=True)
+        raise
+
+    return {
+        "message": "Visitor updated successfully"
+    }
+
 
 from sqlalchemy import or_
 
@@ -300,4 +379,3 @@ def get_visitor(visitor_id: int, db: Session = Depends(get_db)):
 app.include_router(admin_router)
 
 app.include_router(so_router)
-
