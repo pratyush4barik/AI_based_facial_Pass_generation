@@ -1,12 +1,12 @@
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import FastAPI, Depends, File, Form, HTTPException, UploadFile
+from fastapi import Body, FastAPI, Depends, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from sqlalchemy import or_ 
-from model import Visitor
+from model import Blacklist, Visitor
 from database import get_db, init_db
 from model import Admin
 from model import SO
@@ -299,9 +299,19 @@ async def update_visitor(
 from sqlalchemy import or_
 
 @app.get("/visitors")
-def get_visitors(search: str = "", db: Session = Depends(get_db)):
+def get_visitors(
+    search: str = "",
+    limit: int = 100,
+    offset: int = 0,
+    db: Session = Depends(get_db)
+):
 
     query = db.query(Visitor)
+    blacklisted_emp_ids = (
+        db.query(Blacklist.emp_id)
+        .filter(Blacklist.emp_id.isnot(None))
+    )
+    query = query.filter(~Visitor.emp_id.in_(blacklisted_emp_ids))
 
     if search:
 
@@ -319,7 +329,16 @@ def get_visitors(search: str = "", db: Session = Depends(get_db)):
 
         )
 
-    visitors = query.all()
+    limit = max(1, min(limit, 3000))
+    offset = max(0, offset)
+
+    visitors = (
+        query
+        .order_by(Visitor.visitor_id.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
 
     result = []
 
@@ -335,11 +354,179 @@ def get_visitors(search: str = "", db: Session = Depends(get_db)):
 
             "aadhaar_number": v.aadhaar_number,
 
-            "edited_by": v.edited_by
+            "edited_by": v.edited_by,
+
+            "photo_path": v.photo_path
 
         })
 
     return result
+
+@app.get("/blacklist")
+def get_blacklisted_users(
+    search: str = "",
+    limit: int = 3000,
+    offset: int = 0,
+    db: Session = Depends(get_db)
+):
+
+    query = db.query(Blacklist)
+
+    if search:
+
+        matching_emp_ids = (
+            db.query(Visitor.emp_id)
+            .filter(
+                or_(
+                    Visitor.full_name.ilike(f"%{search}%"),
+                    Visitor.aadhaar_number.ilike(f"%{search}%")
+                )
+            )
+        )
+
+        query = query.filter(
+
+            or_(
+
+                Blacklist.emp_id.ilike(f"%{search}%"),
+
+                Blacklist.reason_code.ilike(f"%{search}%"),
+
+                Blacklist.remarks.ilike(f"%{search}%"),
+
+                Blacklist.emp_id.in_(matching_emp_ids)
+
+            )
+
+        )
+
+    limit = max(1, min(limit, 3000))
+    offset = max(0, offset)
+
+    rows = (
+        query
+        .order_by(Blacklist.blacklisted_at.desc())
+        .offset(offset)
+        .limit(limit)
+        .all()
+    )
+
+    result = []
+
+    for blacklist in rows:
+
+        visitor = (
+            db.query(Visitor)
+            .filter(Visitor.emp_id == blacklist.emp_id)
+            .order_by(Visitor.visitor_id.desc())
+            .first()
+        )
+
+        result.append({
+
+            "blacklist_id": blacklist.blacklist_id,
+
+            "emp_id": blacklist.emp_id,
+
+            "full_name": visitor.full_name if visitor else None,
+
+            "blacklisted_by": blacklist.blacklisted_by,
+
+            "reason_code": blacklist.reason_code,
+
+            "remarks": blacklist.remarks,
+
+            "blacklisted_at": blacklist.blacklisted_at,
+
+            "aadhaar_number": visitor.aadhaar_number if visitor else None,
+
+            "photo_path": visitor.photo_path if visitor else None
+
+        })
+
+    return result
+
+@app.post("/blacklist")
+def create_blacklist_entry(
+    payload: dict = Body(...),
+    db: Session = Depends(get_db)
+):
+
+    emp_id = str(payload.get("emp_id") or "").strip()
+
+    if not emp_id:
+        raise HTTPException(status_code=400, detail="emp_id is required")
+
+    existing = (
+        db.query(Blacklist)
+        .filter(Blacklist.emp_id == emp_id)
+        .first()
+    )
+
+    if existing:
+        return {
+            "success": True,
+            "message": "Visitor is already blacklisted.",
+            "blacklist_id": existing.blacklist_id
+        }
+
+    visitor = (
+        db.query(Visitor)
+        .filter(Visitor.emp_id == emp_id)
+        .first()
+    )
+
+    if visitor is None:
+        raise HTTPException(status_code=404, detail="Visitor not found")
+
+    entry = Blacklist(
+        emp_id=emp_id,
+        reason_code=str(payload.get("reason_code") or "1"),
+        remarks=payload.get("remarks"),
+        blacklisted_by=payload.get("blacklisted_by"),
+        blacklisted_at=datetime.now()
+    )
+
+    try:
+        db.add(entry)
+        db.commit()
+        db.refresh(entry)
+    except Exception:
+        db.rollback()
+        raise
+
+    return {
+        "success": True,
+        "message": "Visitor blacklisted successfully.",
+        "blacklist_id": entry.blacklist_id
+    }
+
+@app.delete("/blacklist/{blacklist_id}")
+def remove_blacklist_entry(
+    blacklist_id: int,
+    db: Session = Depends(get_db)
+):
+
+    entry = (
+        db.query(Blacklist)
+        .filter(Blacklist.blacklist_id == blacklist_id)
+        .first()
+    )
+
+    if entry is None:
+        raise HTTPException(status_code=404, detail="Blacklist entry not found")
+
+    try:
+        db.delete(entry)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
+
+    return {
+        "success": True,
+        "message": "Blacklist entry removed successfully."
+    }
 
 @app.get("/visitors/{visitor_id}")
 def get_visitor(visitor_id: int, db: Session = Depends(get_db)):
@@ -352,6 +539,15 @@ def get_visitor(visitor_id: int, db: Session = Depends(get_db)):
 
     if visitor is None:
         raise HTTPException(status_code=404, detail="Visitor not found")
+
+    is_blacklisted = (
+        db.query(Blacklist)
+        .filter(Blacklist.emp_id == visitor.emp_id)
+        .first()
+    )
+
+    if is_blacklisted:
+        raise HTTPException(status_code=404, detail="Visitor is blacklisted")
 
     return {
         "visitor_id": visitor.visitor_id,

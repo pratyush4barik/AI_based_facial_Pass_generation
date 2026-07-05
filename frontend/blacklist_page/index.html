@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blacklist — Visitor Pass Management Portal</title>
+    <meta name="description" content="Search, add, and manage blacklisted visitors in the Visitor Pass Management Portal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../register_page/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Thin top breadcrumb strip -->
+    <header class="mini-header" aria-label="Breadcrumb">
+        <span>Login portal &gt; Blacklist</span>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner" aria-label="Portal banner">
+        <div class="banner__overlay"></div>
+    </section>
+
+    <div class="app" id="appRoot">
+        <!-- Sidebar navigation -->
+        <div class="sidebar">
+            <a href="#" class="menu-item">
+                <span>Register</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Edit</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Model</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Pass Print</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item">
+                <span>Admin Codes</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="#" class="menu-item active">
+                <span>Blacklist</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <div class="spacer"></div>
+            <a id="logoutButton" class="logout">Log Out</a>
+        </div>
+
+        <div class="overlay" id="sidebarOverlay" hidden></div>
+
+        <main class="main">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar__left">
+                    <div>
+                        <h2>Blacklist</h2>
+                    </div>
+                </div>
+                <div class="topbar__right">
+                    <div class="profile" id="profileWidget">
+                        <button class="profile__button" type="button" id="profileToggle" aria-haspopup="true" aria-expanded="false">
+                            <span>
+                                <small id="profileUsername">abc@gmail.com</small>
+                                <strong id="profileName">ABC Name</strong>
+                            </span>
+                            <img alt="Profile picture" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%230B5ED7'/%3E%3Cstop offset='1' stop-color='%230B3C7D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' rx='100' fill='url(%23g)'/%3E%3Ccircle cx='100' cy='82' r='36' fill='white' fill-opacity='.95'/%3E%3Cpath d='M40 180c13-40 41-61 60-61s47 21 60 61' fill='white' fill-opacity='.28'/%3E%3C/svg%3E">
+                        </button>
+                        <div class="profile__menu" id="profileMenu" hidden>
+                            <button type="button">View profile</button>
+                            <button type="button">Account settings</button>
+                            <button type="button" id="profileLogout">Sign out</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard content -->
+            <section class="content-card">
+                <div class="blacklist-page">
+
+                    <!-- ============================== -->
+                    <!-- SECTION 1: Search & Add        -->
+                    <!-- ============================== -->
+                    <div class="bl-section" id="searchAddSection">
+                        <h3 class="bl-sub-header">Search <i class="fa-solid fa-chevron-right bl-chevron"></i> Input <i class="fa-solid fa-chevron-right bl-chevron"></i> Blacklist Added</h3>
+
+                        <!-- Search Bar -->
+                        <div class="search-container" id="topSearchContainer">
+                            <input type="text" id="topSearchInput" class="search-input" placeholder="Search" aria-label="Search employees">
+                            <button type="button" id="topSearchBtn" class="search-btn" aria-label="Submit search">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Top Table -->
+                        <div class="table-card" id="topTableCard">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>EMP ID</th>
+                                        <th>Name</th>
+                                        <th>Addhaar No.</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topTableBody">
+                                    <tr>
+                                        <td colspan="4" class="table-message">Loading visitors...</td>
+                                    </tr>
+                                    <tr class="bl-data-row" data-row-id="1" hidden>
+                                        <td>EMP-001</td>
+                                        <td>John Doe</td>
+                                        <td>123456789012</td>
+                                        <td>
+                                            <button class="btn-pill btn-proceed" id="proceedBtn_1" data-target="expandPane_1">Proceed</button>
+                                        </td>
+                                    </tr>
+                                    <!-- Expanded Detail Pane (hidden by default) -->
+                                    <tr class="expand-row" id="expandPane_1" hidden>
+                                        <td colspan="4">
+                                            <div class="expand-pane">
+                                                <div class="expand-left">
+                                                    <h4 class="expand-label">Reason :-</h4>
+                                                    <ul class="reason-list" id="reasonList_1">
+                                                        <li>1 - Unauthorized entry attempt</li>
+                                                        <li>2 - Fake documentation submitted</li>
+                                                        <li>3 - Misconduct on premises</li>
+                                                        <li>4 - Violation of security protocols</li>
+                                                        <li>5 - Banned by management directive</li>
+                                                        <li>6 - Repeated policy violations</li>
+                                                    </ul>
+                                                    <button class="btn-blacklist-action" id="blacklistConfirm_1" type="button">
+                                                        <i class="fa-solid fa-ban"></i> Blacklist
+                                                    </button>
+                                                </div>
+                                                <div class="expand-right">
+                                                    <div class="image-placeholder" id="imagePlaceholder_1" aria-label="Visitor photo">
+                                                        <i class="fa-solid fa-image"></i>
+                                                        <span>No Image</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="bl-data-row" data-row-id="2" hidden>
+                                        <td>EMP-002</td>
+                                        <td>Jane Smith</td>
+                                        <td>987654321098</td>
+                                        <td>
+                                            <button class="btn-pill btn-proceed" id="proceedBtn_2" data-target="expandPane_2">Proceed</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="expand-row" id="expandPane_2" hidden>
+                                        <td colspan="4">
+                                            <div class="expand-pane">
+                                                <div class="expand-left">
+                                                    <h4 class="expand-label">Reason :-</h4>
+                                                    <ul class="reason-list" id="reasonList_2">
+                                                        <li>1 - Unauthorized entry attempt</li>
+                                                        <li>2 - Fake documentation submitted</li>
+                                                        <li>3 - Misconduct on premises</li>
+                                                        <li>4 - Violation of security protocols</li>
+                                                        <li>5 - Banned by management directive</li>
+                                                        <li>6 - Repeated policy violations</li>
+                                                    </ul>
+                                                    <button class="btn-blacklist-action" id="blacklistConfirm_2" type="button">
+                                                        <i class="fa-solid fa-ban"></i> Blacklist
+                                                    </button>
+                                                </div>
+                                                <div class="expand-right">
+                                                    <div class="image-placeholder" id="imagePlaceholder_2" aria-label="Visitor photo">
+                                                        <i class="fa-solid fa-image"></i>
+                                                        <span>No Image</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Empty structure rows -->
+                                    <tr class="bl-data-row" data-row-id="3" hidden>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Section Divider -->
+                    <hr class="bl-divider">
+
+                    <!-- ============================== -->
+                    <!-- SECTION 2: Blacklisted Users   -->
+                    <!-- ============================== -->
+                    <div class="bl-section" id="blacklistedSection">
+                        <h3 class="bl-section-title">Blacklisted Users</h3>
+
+                        <!-- Search Bar -->
+                        <div class="search-container" id="bottomSearchContainer">
+                            <input type="text" id="bottomSearchInput" class="search-input" placeholder="Search" aria-label="Search blacklisted users">
+                            <button type="button" id="bottomSearchBtn" class="search-btn" aria-label="Submit search">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+
+                        <!-- Bottom Table -->
+                        <div class="table-card" id="bottomTableCard">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>EMP ID</th>
+                                        <th>Name</th>
+                                        <th>Blacklisted By</th>
+                                        <th>Blacklist</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bottomTableBody">
+                                    <tr>
+                                        <td>EMP-010</td>
+                                        <td>Robert Brown</td>
+                                        <td>Admin User</td>
+                                        <td>Unauthorized entry</td>
+                                        <td>
+                                            <button class="btn-pill btn-remove" id="removeBtn_1">Remove</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                    </tr>
+                                    <tr>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                        <td>—</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Footer: Reason List -->
+                        <div class="bl-footer-reasons" id="footerReasons">
+                            <ul>
+                                <li>1 - Unauthorized entry attempt</li>
+                                <li>2 - Fake documentation submitted</li>
+                                <li>3 - Misconduct on premises</li>
+                                <li>4 - Violation of security protocols</li>
+                                <li>5 - Banned by management directive</li>
+                                <li>6 - Repeated policy violations</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- <script src="../register_page/script.js"></script> -->
+    <script src="script.js"></script>
+</body>
+</html>

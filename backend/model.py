@@ -98,3 +98,13 @@ class AdminKey(Base):
 #  │ security_officer
 #  ▼
 # SO
+
+class Blacklist(Base):
+    __tablename__ = "blacklist"
+
+    blacklist_id = Column(Integer, primary_key=True, autoincrement=True)
+    emp_id = Column(String, nullable=True)
+    reason_code = Column(String, nullable=False)
+    remarks = Column(Text, nullable=True)
+    blacklisted_by = Column(Integer, nullable=True)
+    blacklisted_at = Column(DateTime, nullable=False)

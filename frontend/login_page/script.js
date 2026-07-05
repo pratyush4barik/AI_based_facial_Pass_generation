@@ -21,6 +21,16 @@ async function login() {
         localStorage.setItem("name", data.name);
         localStorage.setItem("role", data.role);
 
+        if (data.admin_id) {
+            localStorage.setItem("admin_id", data.admin_id);
+            localStorage.removeItem("officer_id");
+        }
+
+        if (data.officer_id) {
+            localStorage.setItem("officer_id", data.officer_id);
+            localStorage.removeItem("admin_id");
+        }
+
         window.location.href = "../register_page/index.html";
     } else {
         alert(data.message);
