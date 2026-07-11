@@ -156,24 +156,34 @@ def find_matching_visitor(db: Session, embedding: list[float]):
         return None, None
 
     probe = np.array(embedding, dtype=np.float32)
+    probe_norm = np.linalg.norm(probe)
+    if probe_norm == 0:
+        return None, None
+    probe = probe / probe_norm
+
     best_visitor = None
-    best_distance = None
+    best_similarity = None
 
     for visitor in visitors:
         stored = np.array(visitor.embedding, dtype=np.float32)
         if stored.size != probe.size:
             continue
 
-        distance = float(np.linalg.norm(stored - probe))
-        if best_distance is None or distance < best_distance:
+        stored_norm = np.linalg.norm(stored)
+        if stored_norm == 0:
+            continue
+
+        stored = stored / stored_norm
+        similarity = float(np.dot(stored, probe))
+        if best_similarity is None or similarity > best_similarity:
             best_visitor = visitor
-            best_distance = distance
+            best_similarity = similarity
 
     threshold = live_detection.RECOGNITION_THRESHOLD if live_detection is not None else 0.35
-    if best_visitor is None or best_distance is None or best_distance >= threshold:
-        return None, best_distance
+    if best_visitor is None or best_similarity is None or best_similarity < threshold:
+        return None, None if best_similarity is None else float(1.0 - best_similarity)
 
-    return best_visitor, best_distance
+    return best_visitor, float(1.0 - best_similarity)
 
 def cleanup_pass_sessions(db: Session):
     now = datetime.now()

@@ -1,7 +1,7 @@
 services:
   db:
     image: pgvector/pgvector:pg17
-    container_name: visitor-pass-db
+    container_name: pgvec1
     environment:
       POSTGRES_DB: visit_db
       POSTGRES_USER: postgres
@@ -9,7 +9,7 @@ services:
     ports:
       - "55432:5432"
     volumes:
-      - visitor_pass_db:/var/lib/postgresql/data
+      - pgvec1:/var/lib/postgresql/data
       - ./db/init.sql:/docker-entrypoint-initdb.d/001-init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d visit_db"]
@@ -18,4 +18,4 @@ services:
       retries: 10
 
 volumes:
-  visitor_pass_db:
+  pgvec1:
