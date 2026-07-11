@@ -1,0 +1,355 @@
+/* ============================================================
+   Model Page — Camera Feed & Data Tables (Redesigned)
+   Project palette:
+     --primary:      #0B5ED7
+     --primary-dark: #0B3C7D
+     --bg:           #F4F7FB
+     --card:         #FFFFFF
+     --border:       #DDE4EC
+     --text:         #1F2937
+     --muted:        #6B7280
+   ============================================================ */
+
+.model-page {
+    padding: 0 24px 40px;
+    min-height: 100%;
+}
+
+/* ---- 2-Column Grid ---- */
+.model-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* =============================== */
+/* LEFT COLUMN: Camera Feed        */
+/* =============================== */
+.camera-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.camera-feed {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #111827;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #2a3040;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+}
+
+/* Simulated scan-line overlay */
+.camera-feed::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 255, 255, 0.012) 2px,
+            rgba(255, 255, 255, 0.012) 4px
+        );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.camera-stream {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scaleX(-1);
+    z-index: 0;
+}
+
+.camera-feed.stream-ready .camera-placeholder {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Face placeholder silhouette */
+.camera-placeholder {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 140px;
+    height: 160px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    z-index: 2;
+    transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.camera-placeholder i {
+    font-size: 5rem;
+    color: rgba(255, 255, 255, 0.08);
+}
+
+/* ---- Viewfinder Corners ---- */
+.camera-viewfinder {
+    position: absolute;
+    width: 50%;
+    aspect-ratio: 3 / 4;
+    max-width: 220px;
+    z-index: 2;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.vf-corner {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-color: var(--primary, #0B5ED7);
+    border-style: solid;
+    border-width: 0;
+}
+
+.vf-tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; border-radius: 4px 0 0 0; }
+.vf-tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; border-radius: 0 4px 0 0; }
+.vf-bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; border-radius: 0 0 0 4px; }
+.vf-br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 4px 0; }
+
+/* ---- Status Bar (bottom of camera) ---- */
+.camera-status-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(6px);
+    z-index: 3;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #22c55e;
+    flex-shrink: 0;
+}
+
+.status-dot.pulsing {
+    animation: pulse-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+    50% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+}
+
+.status-bar-text {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #22c55e;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* =============================== */
+/* RIGHT COLUMN: Data Tables       */
+/* =============================== */
+.tables-column {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.data-table-card {
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(11, 62, 125, 0.04);
+    overflow: hidden;
+}
+
+.data-table-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table-card thead {
+    background: linear-gradient(180deg, var(--primary, #0B5ED7), #0a56c4);
+    color: white;
+}
+
+.data-table-card th {
+    padding: 14px 18px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.data-table-card th.col-sl {
+    width: 70px;
+    text-align: center;
+}
+
+.data-table-card td {
+    padding: 12px 18px;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text, #1F2937);
+    border-bottom: 1px solid #f0f2f5;
+    vertical-align: middle;
+}
+
+.data-table-card td:first-child {
+    text-align: center;
+    font-weight: 600;
+    color: var(--muted, #6B7280);
+    width: 70px;
+}
+
+.data-table-card tbody tr {
+    transition: background 180ms ease;
+}
+
+.data-table-card tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.data-table-card tbody tr:hover {
+    background: rgba(11, 94, 215, 0.04);
+}
+
+.data-table-card tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-message {
+    text-align: center !important;
+    color: var(--muted, #6B7280) !important;
+    font-weight: 600;
+}
+
+.row-meta {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted, #6B7280);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.duration-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.48);
+    z-index: 50;
+}
+
+.duration-modal.show {
+    display: flex;
+}
+
+.duration-modal__content {
+    width: min(420px, 100%);
+    background: #fff;
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+}
+
+.duration-modal__content h3 {
+    margin: 0 0 8px;
+    font-size: 1.2rem;
+    color: var(--text, #1F2937);
+}
+
+.duration-modal__content p {
+    margin: 0 0 18px;
+    color: var(--muted, #6B7280);
+    font-size: 0.95rem;
+}
+
+.duration-modal__content label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: var(--text, #1F2937);
+}
+
+.duration-modal__content input {
+    width: 100%;
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font: inherit;
+}
+
+.duration-modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-duration-primary,
+.btn-duration-secondary {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-duration-primary {
+    color: #fff;
+    background: var(--primary, #0B5ED7);
+}
+
+.btn-duration-secondary {
+    color: var(--text, #1F2937);
+    background: #EEF2F7;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+    .model-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .camera-feed {
+        aspect-ratio: 16 / 10;
+    }
+}
+
+@media (max-width: 600px) {
+    .model-page {
+        padding: 0 14px 30px;
+    }
+
+    .data-table-card th,
+    .data-table-card td {
+        padding: 10px 12px;
+        font-size: 0.82rem;
+    }
+
+    .status-bar-text {
+        font-size: 0.9rem;
+    }
+}

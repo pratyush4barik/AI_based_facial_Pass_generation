@@ -49,6 +49,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }) || code;
     }
 
+    function getReasonCode(reason) {
+        return String(reason).split(" - ")[0];
+    }
+
     function getBlacklistedBy() {
         return Number(localStorage.getItem("admin_id") || localStorage.getItem("officer_id")) || null;
     }
@@ -85,7 +89,22 @@ document.addEventListener("DOMContentLoaded", function () {
         topTableBody.innerHTML = visitors.map(function (visitor, index) {
             const rowId = `visitor_${visitor.visitor_id}`;
             const reasons = REASONS.map(function (reason) {
-                return `<li>${escapeHtml(reason)}</li>`;
+                const reasonCode = getReasonCode(reason);
+                const inputId = `reason_${rowId}_${reasonCode}`;
+
+                return `
+                    <li>
+                        <label class="reason-option" for="${escapeHtml(inputId)}">
+                            <input
+                                type="radio"
+                                id="${escapeHtml(inputId)}"
+                                name="blacklist_reason_${escapeHtml(rowId)}"
+                                value="${escapeHtml(reasonCode)}"
+                            >
+                            <span>${escapeHtml(reason)}</span>
+                        </label>
+                    </li>
+                `;
             }).join("");
 
             return `
@@ -228,6 +247,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const empId = button.dataset.empId;
         if (!empId) return;
 
+        const expandRow = button.closest(".expand-row");
+        const selectedReason = expandRow ? expandRow.querySelector("input[type='radio']:checked") : null;
+
+        if (!selectedReason) {
+            alert("Please select a blacklist reason.");
+            return;
+        }
+
+        const reasonCode = selectedReason.value;
+        const reasonText = getReasonText(reasonCode);
+
         button.disabled = true;
         button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving';
 
@@ -239,8 +269,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 body: JSON.stringify({
                     emp_id: empId,
-                    reason_code: "1",
-                    remarks: getReasonText("1"),
+                    reason_code: reasonCode,
+                    remarks: reasonText,
                     blacklisted_by: getBlacklistedBy()
                 })
             });

@@ -1,0 +1,427 @@
+/* ============================================================
+   Print Page — Pass Management & Preview
+   Project palette:
+     --primary:      #0B5ED7
+     --primary-dark: #0B3C7D
+     --bg:           #F4F7FB
+     --card:         #FFFFFF
+     --border:       #DDE4EC
+     --text:         #1F2937
+     --muted:        #6B7280
+   ============================================================ */
+
+.print-page {
+    padding: 0 24px 40px;
+    min-height: 100%;
+}
+
+/* ---- Search & Filter Bar ---- */
+.search-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+    background: var(--card, #fff);
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--border, #DDE4EC);
+    box-shadow: 0 4px 12px rgba(11, 62, 125, 0.04);
+}
+
+.search-group {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 0.9rem;
+    color: var(--muted, #6B7280);
+    pointer-events: none;
+}
+
+.search-input {
+    width: 100%;
+    height: 46px;
+    padding: 0 16px 0 40px;
+    font-size: 0.95rem;
+    color: var(--text, #1F2937);
+    background: #f8fafc;
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.search-input:focus {
+    border-color: var(--primary, #0B5ED7);
+    box-shadow: 0 0 0 3px rgba(11, 94, 215, 0.12);
+}
+
+.filter-dropdown {
+    height: 46px;
+    padding: 0 14px;
+    font-size: 0.9rem;
+    color: var(--text, #1F2937);
+    background: #f8fafc;
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 8px;
+    outline: none;
+    cursor: pointer;
+    min-width: 130px;
+    transition: border-color 180ms ease;
+}
+
+.filter-dropdown:focus {
+    border-color: var(--primary, #0B5ED7);
+}
+
+/* ---- Data Table ---- */
+.table-card {
+    background: var(--card, #fff);
+    border: 1px solid var(--border, #DDE4EC);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(11, 62, 125, 0.04);
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: linear-gradient(180deg, var(--primary, #0B5ED7), #0a56c4);
+    color: white;
+}
+
+th {
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.88rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+td {
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.93rem;
+    color: var(--text, #1F2937);
+    border-bottom: 1px solid #f0f2f5;
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: background 180ms ease;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+tbody tr:hover {
+    background: rgba(11, 94, 215, 0.04);
+}
+
+.table-message {
+    height: 120px;
+    text-align: center;
+    color: var(--muted, #6B7280);
+    font-weight: 600;
+}
+
+.row-enter {
+    animation: rowEnter 280ms ease both;
+}
+
+@keyframes rowEnter {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Print Row Button */
+.btn-print-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 18px;
+    background: #eef4ff;
+    color: var(--primary, #0B5ED7);
+    border: 1px solid #cfe0ff;
+    border-radius: 20px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 180ms ease, transform 180ms ease;
+}
+
+.btn-print-row:hover {
+    background: #dbe8ff;
+    transform: translateY(-1px);
+}
+
+.btn-print-row.active-print {
+    background: var(--primary, #0B5ED7);
+    color: white;
+    border-color: var(--primary, #0B5ED7);
+}
+
+/* ============================== */
+/* Pass Preview Section           */
+/* ============================== */
+.pass-preview-section {
+    margin-top: 28px;
+    animation: fadeSlideIn 320ms ease-out;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.preview-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text, #1F2937);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-title i {
+    color: var(--primary, #0B5ED7);
+}
+
+/* ---- The Badge Card ---- */
+.pass-badge {
+    width: 340px;
+    margin: 0 auto;
+    background: var(--card, #fff);
+    border: 2px solid var(--border, #DDE4EC);
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 10px 32px rgba(11, 62, 125, 0.10);
+}
+
+/* Badge Header */
+.badge-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, var(--primary, #0B5ED7), var(--primary-dark, #0B3C7D));
+    color: white;
+}
+
+.badge-logo {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.badge-logo-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.35);
+}
+
+.badge-org strong {
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.badge-org small {
+    font-size: 0.68rem;
+    opacity: 0.8;
+    line-height: 1.4;
+}
+
+.badge-divider {
+    border: none;
+    border-top: 1px solid var(--border, #DDE4EC);
+    margin: 0;
+}
+
+/* Badge Body */
+.badge-body {
+    display: flex;
+    gap: 24px;
+    padding: 24px 22px 28px;
+    align-items: flex-start;
+}
+
+.badge-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.badge-field {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.badge-label {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #9ca3af;
+}
+
+.badge-value {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text, #1F2937);
+}
+
+/* Photo Placeholder */
+.badge-photo {
+    width: 100px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: #f4f6f9;
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.badge-photo i {
+    font-size: 1.8rem;
+    color: #c9cdd4;
+}
+
+.badge-photo span {
+    font-size: 0.65rem;
+    color: #9ca3af;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-photo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* ---- Confirm & Print Button ---- */
+.btn-confirm-print {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 340px;
+    margin: 20px auto 0;
+    height: 50px;
+    background: linear-gradient(180deg, var(--primary, #0B5ED7), #0a56c4);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    box-shadow: 0 8px 22px rgba(11, 94, 215, 0.2);
+}
+
+.btn-confirm-print:hover {
+    background: linear-gradient(180deg, #0a56c4, var(--primary-dark, #0B3C7D));
+    transform: translateY(-1px);
+    box-shadow: 0 10px 26px rgba(11, 94, 215, 0.28);
+}
+
+.btn-confirm-print:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 12px rgba(11, 94, 215, 0.15);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+    .print-page {
+        padding: 0 14px 30px;
+    }
+
+    .search-filter-bar {
+        flex-direction: column;
+        padding: 12px;
+    }
+
+    .filter-dropdown {
+        width: 100%;
+    }
+
+    .pass-badge {
+        width: 100%;
+        max-width: 340px;
+    }
+
+    .btn-confirm-print {
+        width: 100%;
+        max-width: 340px;
+    }
+
+    .badge-body {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .badge-photo {
+        width: 100%;
+        height: 120px;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        font-size: 0.82rem;
+    }
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #passBadge,
+    #passBadge * {
+        visibility: visible;
+    }
+
+    #passBadge {
+        position: absolute;
+        left: 0;
+        top: 0;
+        box-shadow: none;
+    }
+}

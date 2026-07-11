@@ -58,6 +58,20 @@ class Visitor(Base):
     edited_at = Column(DateTime, nullable=True)
 
 
+class PassSession(Base):
+    __tablename__ = "pass_sessions"
+
+    session_id = Column(Integer, primary_key=True, autoincrement=True)
+    visitor_id = Column(Integer, ForeignKey("visitors.visitor_id"), nullable=False)
+    emp_id = Column(String, nullable=False, index=True)
+    passed = Column(Boolean, default=True, nullable=False)
+    detected_at = Column(DateTime, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    printed_at = Column(DateTime, nullable=True)
+
+    visitor = relationship("Visitor")
+
+
 class AdminKey(Base):
     __tablename__ = "admin_keys"
 

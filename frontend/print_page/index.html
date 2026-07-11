@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pass Print — Visitor Pass Management Portal</title>
+    <meta name="description" content="Search, preview, and print visitor passes for the Visitor Pass Management Portal.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../register_page/style.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Thin top breadcrumb strip -->
+    <header class="mini-header" aria-label="Breadcrumb">
+        <span>Login portal &gt; Print</span>
+    </header>
+
+    <!-- Banner -->
+    <section class="banner" aria-label="Portal banner">
+        <div class="banner__overlay"></div>
+    </section>
+
+    <div class="app" id="appRoot">
+        <!-- Sidebar navigation -->
+        <div class="sidebar">
+            <a href="../register_page/index.html" class="menu-item">
+                <span>Register</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="../edit_page/index.html" class="menu-item">
+                <span>Edit</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="../model_page/index.html" class="menu-item">
+                <span>Model</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="../print_page/index.html" class="menu-item active">
+                <span>Pass Print</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="../admin_codes_page/index.html" class="menu-item">
+                <span>Admin Codes</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <a href="../blacklist_page/index.html" class="menu-item">
+                <span>Blacklist</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+            <div class="spacer"></div>
+            <a id="logoutButton" class="logout">Log Out</a>
+        </div>
+
+        <div class="overlay" id="sidebarOverlay" hidden></div>
+
+        <main class="main">
+            <!-- Topbar -->
+            <header class="topbar">
+                <div class="topbar__left">
+                    <div><h2>Pass Print</h2></div>
+                </div>
+                <div class="topbar__right">
+                    <div class="profile" id="profileWidget">
+                        <button class="profile__button" type="button" id="profileToggle" aria-haspopup="true" aria-expanded="false">
+                            <span>
+                                <small id="profileUsername">abc@gmail.com</small>
+                                <strong id="profileName">ABC Name</strong>
+                            </span>
+                            <img alt="Profile picture" src="data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1' y1='0' y2='1'%3E%3Cstop offset='0' stop-color='%230B5ED7'/%3E%3Cstop offset='1' stop-color='%230B3C7D'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' rx='100' fill='url(%23g)'/%3E%3Ccircle cx='100' cy='82' r='36' fill='white' fill-opacity='.95'/%3E%3Cpath d='M40 180c13-40 41-61 60-61s47 21 60 61' fill='white' fill-opacity='.28'/%3E%3C/svg%3E">
+                        </button>
+                        <div class="profile__menu" id="profileMenu" hidden>
+                            <button type="button">View profile</button>
+                            <button type="button">Account settings</button>
+                            <button type="button" id="profileLogout">Sign out</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard content -->
+            <section class="content-card">
+                <div class="print-page">
+
+                    <!-- ============================== -->
+                    <!-- TOP: Search & Filter Bar       -->
+                    <!-- ============================== -->
+                    <div class="search-filter-bar" id="printSearchBar">
+                        <div class="search-group">
+                            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                            <input type="text" id="printSearchInput" class="search-input" placeholder="Search by name, EMP ID, or Aadhaar" aria-label="Search passes">
+                        </div>
+                        <select id="filterDropdown" class="filter-dropdown">
+                            <option value="all">All</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                        </select>
+                    </div>
+
+                    <!-- ============================== -->
+                    <!-- Data Table                     -->
+                    <!-- ============================== -->
+                    <div class="table-card" id="printTableCard">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>EMP ID</th>
+                                    <th>Name</th>
+                                    <th>Aadhaar</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="printTableBody">
+                                <tr class="print-row" data-row-id="1" data-name="John Doe" data-app="APP-2025-001" data-role="Visitor">
+                                    <td>APP-2025-001</td>
+                                    <td>John Doe</td>
+                                    <td>1234 5678 9012</td>
+                                    <td>
+                                        <button class="btn-print-row" id="printRowBtn_1" data-target="passPreview" data-name="John Doe" data-app="APP-2025-001" data-role="Visitor">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="print-row" data-row-id="2" data-name="Jane Smith" data-app="APP-2025-002" data-role="Employee">
+                                    <td>APP-2025-002</td>
+                                    <td>Jane Smith</td>
+                                    <td>9876 5432 1098</td>
+                                    <td>
+                                        <button class="btn-print-row" id="printRowBtn_2" data-target="passPreview" data-name="Jane Smith" data-app="APP-2025-002" data-role="Employee">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="print-row" data-row-id="3">
+                                    <td>APP-2025-003</td>
+                                    <td>Robert Brown</td>
+                                    <td>5555 6666 7777</td>
+                                    <td>
+                                        <button class="btn-print-row" id="printRowBtn_3" data-target="passPreview" data-name="Robert Brown" data-app="APP-2025-003" data-role="Vendor">
+                                            <i class="fa-solid fa-print"></i> Print
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- ============================== -->
+                    <!-- Pass Preview (Hidden Default)  -->
+                    <!-- ============================== -->
+                    <div class="pass-preview-section" id="passPreview" hidden>
+                        <h3 class="preview-title">
+                            <i class="fa-solid fa-id-badge"></i> Pass Preview
+                        </h3>
+
+                        <div class="pass-badge" id="passBadge">
+                            <!-- Badge Header -->
+                            <div class="badge-header">
+                                <div class="badge-logo">
+                                    <img src="drdo-logo.png" alt="DRDO Logo" class="badge-logo-img">
+                                </div>
+                                <div class="badge-org">
+                                    <strong>Visitor Pass Management</strong>
+                                    <small>Defence Research &amp; Development Organisation</small>
+                                </div>
+                            </div>
+
+                            <hr class="badge-divider">
+
+                            <!-- Badge Body -->
+                            <div class="badge-body">
+                                <div class="badge-info">
+                                    <div class="badge-field">
+                                        <span class="badge-label">Name</span>
+                                        <span class="badge-value" id="badgeName">John Doe</span>
+                                    </div>
+                                    <div class="badge-field">
+                                        <span class="badge-label">EMP ID</span>
+                                        <span class="badge-value" id="badgeAppNo">EMP-2025-001</span>
+                                    </div>
+                                    <div class="badge-field">
+                                        <span class="badge-label">Role</span>
+                                        <span class="badge-value" id="badgeRole">Visitor</span>
+                                    </div>
+                                    <div class="badge-field">
+                                        <span class="badge-label">Valid</span>
+                                        <span class="badge-value" id="badgeDate">—</span>
+                                    </div>
+                                </div>
+                                <div class="badge-photo" id="badgePhoto">
+                                    <i class="fa-solid fa-user"></i>
+                                    <span>Photo</span>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <!-- Confirm & Print -->
+                        <button class="btn-confirm-print" id="confirmPrintBtn" type="button">
+                            <i class="fa-solid fa-print"></i> Confirm &amp; Print
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../common.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

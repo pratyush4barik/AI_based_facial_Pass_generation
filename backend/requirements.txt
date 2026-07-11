@@ -4,6 +4,8 @@ sqlalchemy
 psycopg2-binary
 pgvector
 python-multipart
+numpy
 opencv-python
 insightface
 onnxruntime
+torch
